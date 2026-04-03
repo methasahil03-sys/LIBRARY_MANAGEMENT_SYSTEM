@@ -6,7 +6,7 @@ const jwt    = require("jsonwebtoken");
 
 const adminController = {};
 
-/* ── LOGIN ──────────────────────────────────────────────────────── */
+
 adminController.login = async (req, res) => {
   try {
     const email    = String(req.body?.email    || "").trim().toLowerCase();
@@ -42,7 +42,6 @@ adminController.login = async (req, res) => {
   }
 };
 
-/* ── ADD LIBRARIAN ──────────────────────────────────────────────── */
 adminController.addLibrarian = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -60,7 +59,6 @@ adminController.addLibrarian = async (req, res) => {
   }
 };
 
-/* ── GET ALL LIBRARIANS ─────────────────────────────────────────── */
 adminController.getLibrarians = async (req, res) => {
   try {
     const librarians = await UserModel.find({ role: "librarian" }, "-password").sort({ createdAt: -1 });
@@ -70,7 +68,6 @@ adminController.getLibrarians = async (req, res) => {
   }
 };
 
-/* ── DELETE LIBRARIAN ───────────────────────────────────────────── */
 adminController.deleteLibrarian = async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
@@ -83,7 +80,6 @@ adminController.deleteLibrarian = async (req, res) => {
   }
 };
 
-/* ── GET ALL MEMBERS ────────────────────────────────────────────── */
 adminController.getMembers = async (req, res) => {
   try {
     const members = await UserModel.find({ role: "user" }, "-password").sort({ createdAt: -1 });
@@ -93,7 +89,6 @@ adminController.getMembers = async (req, res) => {
   }
 };
 
-/* ── ACTIVATE / DEACTIVATE USER ─────────────────────────────────── */
 adminController.toggleUserStatus = async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
@@ -107,7 +102,6 @@ adminController.toggleUserStatus = async (req, res) => {
   }
 };
 
-/* ── MEMBER BORROW HISTORY ──────────────────────────────────────── */
 adminController.getMemberBorrowHistory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -122,7 +116,6 @@ adminController.getMemberBorrowHistory = async (req, res) => {
   }
 };
 
-/* ── FINE CONFIG ────────────────────────────────────────────────── */
 adminController.getFineConfig = async (req, res) => {
   try {
     let config = await FineConfigModel.findOne();

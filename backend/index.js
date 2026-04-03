@@ -17,3 +17,18 @@ const home        = require("./routes/home.js");
 const reservation = require("./routes/reservation.js");  // ✅ NEW
 const fine        = require("./routes/fine.js");          // ✅ NEW
 const report      = require("./routes/report.js");        // ✅ NEw
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://library-management-app-karan.vercel.app",
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+}));
+
+app.use(express.json());
