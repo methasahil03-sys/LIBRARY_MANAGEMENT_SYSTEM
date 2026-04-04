@@ -1,4 +1,3 @@
-// backend/controller/user.js
 const { UserModel } = require("../model/UserModel");
 const { ContactModel } = require("../model/ContactModel");
 const { OtpModel } = require("../model/OtpModel");
@@ -8,7 +7,6 @@ const jwt = require("jsonwebtoken");
 
 const userController = {};
 
-/* -------------------- Registration -------------------- */
 userController.userRegistration = async (req, res) => {
   try {
     const name = String(req.body?.name || "").trim();
@@ -52,7 +50,6 @@ userController.userRegistration = async (req, res) => {
   }
 };
 
-/* -------------------- Login -------------------- */
 userController.login = async (req, res) => {
   try {
     const email = String(req.body?.email || "")
@@ -66,12 +63,10 @@ userController.login = async (req, res) => {
         .json({ message: "Email and password are required" });
     }
 
-    // Case-insensitive exact match
     const user = await UserModel.findOne({
       email: { $regex: `^${email}$`, $options: "i" },
     });
 
-    // TEMP DEBUG (remove later)
     console.log("LOGIN email:", email);
     console.log("LOGIN user doc found:", !!user, user?.email, user?.role);
 
@@ -86,7 +81,6 @@ userController.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // ✅ Block inactive users
     if (user.status === "Inactive") {
       return res
         .status(403)
@@ -113,7 +107,6 @@ userController.login = async (req, res) => {
   }
 };
 
-/* -------------------- Get Users -------------------- */
 userController.getUsers = async (req, res) => {
   try {
     const user = await UserModel.find({}, "-password");
@@ -137,7 +130,6 @@ userController.getUsers = async (req, res) => {
   }
 };
 
-/* -------------------- Profile -------------------- */
 userController.profile = async (req, res) => {
   try {
     const { id } = req.userInfo;
@@ -158,7 +150,6 @@ userController.profile = async (req, res) => {
   }
 };
 
-/* -------------------- Contact -------------------- */
 userController.addContact = async (req, res) => {
   const { name, email, subject, message } = req.body;
   if (!name || !email || !subject || !message) {
@@ -179,7 +170,6 @@ userController.addContact = async (req, res) => {
   }
 };
 
-/* -------------------- Mailer -------------------- */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -188,7 +178,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/* -------------------- Forgot / OTP -------------------- */
 userController.forgotPassword = async (req, res) => {
   const email = String(req.body?.email || "")
     .trim()
@@ -208,7 +197,7 @@ userController.forgotPassword = async (req, res) => {
     );
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER, // fix: was process.env.EMAIL
+      from: process.env.EMAIL_USER, 
       to: email,
       subject: "Your OTP for Password Reset",
       html: `<p>Your OTP is <strong>${otp}</strong>. It is valid for 10 minutes.</p>`,
@@ -256,7 +245,6 @@ userController.resetPassword = async (req, res) => {
   }
 };
 
-/* -------------------- Update Profile -------------------- */
 userController.updateProfile = async (req, res) => {
   try {
     const { id } = req.userInfo;

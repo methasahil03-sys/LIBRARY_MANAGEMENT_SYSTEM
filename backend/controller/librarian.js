@@ -6,7 +6,6 @@ const { clearCache } = require("../utils/cache");
 
 const librarianController = {};
 
-/* ===================== ISSUED BOOKS ===================== */
 librarianController.bookIssued = async (req, res) => {
   try {
     const requests = await BorrowModel.find({ status: "Issued" })
@@ -24,7 +23,6 @@ librarianController.bookIssued = async (req, res) => {
   }
 };
 
-/* ===================== ISSUE REQUESTS ===================== */
 librarianController.issueRequest = async (req, res) => {
   try {
     const requests = await BorrowModel.find({ status: "Requested" })
@@ -42,7 +40,6 @@ librarianController.issueRequest = async (req, res) => {
   }
 };
 
-/* ===================== APPROVE ISSUE ===================== */
 librarianController.approveRequest = async (req, res) => {
   try {
     const borrowId = req.params.id;
@@ -80,14 +77,12 @@ librarianController.approveRequest = async (req, res) => {
       });
     }
 
-    // approve borrow
     borrow.status = "Issued";
     borrow.issueDate = new Date();
     borrow.dueDate = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
     borrow.approvedBy = req.userInfo?.id || null;
     await borrow.save();
 
-    // decrement available copies (NO save, NO validation)
     await BookModel.updateOne(
       { _id: book._id },
       { $inc: { availableCopies: -1 } }
@@ -104,7 +99,6 @@ librarianController.approveRequest = async (req, res) => {
   }
 };
 
-/* ===================== RETURN REQUESTS ===================== */
 librarianController.returnRequest = async (req, res) => {
   try {
     const requests = await BorrowModel.find({ status: "Requested Return" })
@@ -127,7 +121,6 @@ librarianController.returnRequest = async (req, res) => {
   }
 };
 
-/* ===================== APPROVE RETURN ===================== */
 librarianController.approveReturnRequest = async (req, res) => {
   try {
     const borrowId = req.params.id;
@@ -147,13 +140,11 @@ librarianController.approveReturnRequest = async (req, res) => {
       });
     }
 
-    // increment available copies safely (NO book.save())
     await BookModel.updateOne(
       { _id: borrow.bookId },
       { $inc: { availableCopies: 1 } }
     );
 
-    // finalize borrow
     borrow.status = "Returned";
     borrow.returnDate = new Date();
     borrow.approvedBy = req.userInfo?.id || null;
