@@ -32,3 +32,16 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+
+
+app.use("/users",        users);
+app.use("/books",        books);
+app.use("/admin",        admin);
+app.use("/librarian",    librarian);
+app.use("/home",         home);
+app.use("/reservations", reservation);  // ✅ NEW
+app.use("/fines",        fine);         // ✅ NEW
+app.use("/reports",      report);       // ✅ NEW
+
+app.get("/", (_req, res) => res.send("✅ Library Management API is running..."));
