@@ -44,3 +44,20 @@ app.use("/fines",        fine);
 app.use("/reports",      report);       
 
 app.get("/", (_req, res) => res.send(" Library Management API is running..."));
+
+
+//  DB + Server 
+const PORT = process.env.PORT || 5000;
+const uri  = process.env.MONGO_URI;
+
+(async () => {
+  try {
+    console.log("Connecting to MongoDB:", uri?.replace(/\/\/.*?:.*?@/, "//<user>:<pass>@"));
+    await mongoose.connect(uri, { dbName: process.env.DB_NAME || "library" });
+    console.log("Connected DB name:", mongoose.connection.db.databaseName);
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  } catch (err) {
+    console.error("Mongo connection error:", err.message);
+    process.exit(1);
+  }
+})();
