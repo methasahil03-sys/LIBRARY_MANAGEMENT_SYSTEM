@@ -14,3 +14,10 @@ const seedAdmin = async () => {
     if (!adminEmail || !adminPassword) {
       throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env");
     }
+
+    const existingAdmin = await UserModel.findOne({ email: adminEmail });
+
+    if (existingAdmin) {
+      console.log("Admin already exists");
+      process.exit();
+    }
