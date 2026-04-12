@@ -21,3 +21,12 @@ const seedAdmin = async () => {
       console.log("Admin already exists");
       process.exit();
     }
+
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+    const admin = new UserModel({
+      name: "Super Admin",
+      email: adminEmail,
+      password: hashedPassword,
+      role: "admin",
+    });
