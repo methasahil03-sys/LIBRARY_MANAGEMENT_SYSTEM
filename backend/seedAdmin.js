@@ -30,3 +30,16 @@ const seedAdmin = async () => {
       password: hashedPassword,
       role: "admin",
     });
+
+     await admin.save();
+
+    console.log("Admin seeded successfully ");
+    process.exit();
+  } catch (error) {
+    console.error("Seeding error:", error);
+    process.exit(1);
+  }
+};
+
+seedAdmin();
+
