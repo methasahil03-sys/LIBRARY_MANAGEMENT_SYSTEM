@@ -19,11 +19,10 @@ const UserSchema = new Schema({
 }, { timestamps: true });
 
 
-UserSchema.pre("save", function(next) {
+UserSchema.pre("save", async function() {
   if (this.role === "user" && !this.membershipId) {
     this.membershipId = generateMembershipId();
   }
-  next();
 });
 
 module.exports = { UserSchema };
