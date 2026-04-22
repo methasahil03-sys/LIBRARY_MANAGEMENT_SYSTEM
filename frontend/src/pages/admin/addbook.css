@@ -1,0 +1,282 @@
+/* ══════════════════════════════════════════════════════════
+   ADD BOOK PAGE — Cotton Theme
+   Matches: AdminDashboard.css Cotton Theme
+   ══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Page wrapper ───────────────────────────────────────── */
+.addbook-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  background: var(--bg-base, #f3f0fb);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Page header ────────────────────────────────────────── */
+.addbook-header {
+  width: 100%;
+  max-width: 760px;
+  margin-bottom: 1.75rem;
+}
+
+.addbook-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary, #2a2050);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.addbook-title .title-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-purple, linear-gradient(135deg,#c4b5fd,#93c5fd));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+}
+
+.addbook-subtitle {
+  color: var(--text-secondary, #6b5e95);
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.addbook-card {
+  width: 100%;
+  max-width: 760px;
+  background: var(--bg-surface, #ffffff);
+  border: 2px solid var(--border, #e4ddf5);
+  border-radius: 28px;
+  padding: 2.5rem;
+  box-shadow: 0 6px 32px rgba(100,60,200,0.10);
+  animation: fadeInUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Two-column grid ────────────────────────────────────── */
+.addbook-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+}
+
+.addbook-full { grid-column: 1 / -1; }
+
+/* ── Form group ─────────────────────────────────────────── */
+.addbook-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.addbook-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #6b5e95);
+}
+
+/* ── Inputs & Selects ───────────────────────────────────── */
+.addbook-input,
+.addbook-select,
+.addbook-textarea {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text-primary, #2a2050);
+  background: var(--bg-elevated, #fafaff);
+  border: 2px solid var(--border, #e4ddf5);
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.addbook-input:focus,
+.addbook-select:focus,
+.addbook-textarea:focus {
+  border-color: var(--border-active, #c0b0f0);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+  transform: translateY(-1px);
+  background: #ffffff;
+}
+
+.addbook-input::placeholder,
+.addbook-textarea::placeholder {
+  color: var(--text-muted, #b8aad8);
+}
+
+.addbook-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b5e95' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.addbook-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ── File upload ─────────────────────────────────────────── */
+.addbook-file-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.addbook-file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.addbook-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  background: var(--bg-overlay, #ede9f8);
+  border: 2px dashed var(--border-active, #c0b0f0);
+  border-radius: 14px;
+  color: var(--accent, #8b5cf6);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.addbook-file-btn:hover {
+  background: rgba(139,92,246,0.10);
+  box-shadow: 0 2px 10px rgba(139,92,246,0.15);
+}
+
+.addbook-file-name {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #6b5e95);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Error message ──────────────────────────────────────── */
+.addbook-error {
+  font-size: 0.76rem;
+  color: #ef4444;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ── Submit button ──────────────────────────────────────── */
+.addbook-submit-wrap {
+  margin-top: 1.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.addbook-submit {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 0.85rem 2.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 18px rgba(139,92,246,0.35);
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.2s ease,
+              background 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.addbook-submit:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 28px rgba(139,92,246,0.45);
+}
+
+.addbook-submit:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.addbook-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.addbook-submit .btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Divider ────────────────────────────────────────────── */
+.addbook-divider {
+  height: 2px;
+  background: var(--border, #e4ddf5);
+  border-radius: 999px;
+  margin: 1.5rem 0;
+  grid-column: 1 / -1;
+}
+
+/* ── Section label ──────────────────────────────────────── */
+.addbook-section-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted, #b8aad8);
+  grid-column: 1 / -1;
+  margin-bottom: -0.4rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .addbook-page  { padding: 1.25rem 1rem; }
+  .addbook-card  { padding: 1.5rem 1.25rem; border-radius: 20px; }
+  .addbook-grid  { grid-template-columns: 1fr; }
+  .addbook-full  { grid-column: 1; }
+  .addbook-submit-wrap { justify-content: stretch; }
+  .addbook-submit { width: 100%; justify-content: center; }
+}

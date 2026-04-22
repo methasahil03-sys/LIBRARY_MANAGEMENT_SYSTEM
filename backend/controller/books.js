@@ -30,7 +30,7 @@ booksController.addNewBook = async (req, res) => {
     }
 
     let coverImageUrl = req.file ? req.file.path : "";
-    let cloudinaryId = req.file ? req.file.filename : "";
+    let cloudinaryId = req.file ? req.file.filename : "no-image";
 
     const newBook = new BookModel({
       title,
@@ -56,10 +56,10 @@ booksController.addNewBook = async (req, res) => {
       book: newBook,
     });
   } catch (error) {
-    console.log(error);
+    console.error("addNewBook error:", error.message);
     res
       .status(500)
-      .json({ error: true, message: "Internal Server Error", error });
+      .json({ error: true, message: error.message || "Internal Server Error" });
   }
 };
 
