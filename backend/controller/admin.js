@@ -17,8 +17,20 @@ adminController.login = async (req, res) => {
     const envEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
     const envPass  = (process.env.ADMIN_PASSWORD || "").trim();
     if (envEmail && envPass && email === envEmail && password === envPass) {
-      const token = jwt.sign({ email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "24h" });
-      return res.json({ message: "Login successful", token, user: { name: "Env Admin", email, role: "admin" } });
+      // Always fetch from DB so we get the real _id for addedBy references
+      const envAdmin = await UserModel.findOne({ email: { $regex: `^${email}$`, $options: "i" } });
+      const adminId  = envAdmin ? envAdmin._id : null;
+      const adminName = envAdmin ? envAdmin.name : "Admin";
+      if (!adminId) {
+        // Admin exists in .env but NOT in DB yet — guide them to run seedAdmin.js
+        return res.status(500).json({ message: "Admin user not found in database. Please run: node seedAdmin.js" });
+      }
+      const token = jwt.sign(
+        { id: adminId, email, role: "admin", name: adminName },
+        process.env.JWT_SECRET,
+        { expiresIn: "24h" }
+      );
+      return res.json({ message: "Login successful", token, user: { name: adminName, email, role: "admin" } });
     }
 
     const user = await UserModel.findOne({ email: { $regex: `^${email}$`, $options: "i" } });
