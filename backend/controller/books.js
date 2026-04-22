@@ -7,6 +7,14 @@ const { clearCache } = require("../utils/cache");
 
 booksController.addNewBook = async (req, res) => {
   try {
+    // Guard: token must contain id (old env-admin tokens didn't include it)
+    if (!req.userInfo?.id) {
+      return res.status(401).json({
+        error: true,
+        message: "Session expired or invalid token. Please log out and log in again.",
+      });
+    }
+
     const {
       title,
       author,
