@@ -5,8 +5,9 @@ const { UserModel } = require("./model/UserModel");
 
 const seedAdmin = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB Connected");
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME || "library" });
+    console.log("Connected DB name:", mongoose.connection.db.databaseName);
 
     const adminEmail = process.env.ADMIN_EMAIL.trim().toLowerCase();
     const adminPassword = process.env.ADMIN_PASSWORD.trim();
