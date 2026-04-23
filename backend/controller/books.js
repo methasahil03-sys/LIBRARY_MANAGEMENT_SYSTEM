@@ -141,7 +141,9 @@ booksController.getLatestBooks = async (req, res) => {
 
     // Get the unique active students from the issued books
     const activeStudents = new Set(
-      issuedBooks.map((issue) => issue.userId._id.toString()),
+      issuedBooks
+        .filter((issue) => issue.userId)
+        .map((issue) => issue.userId._id.toString()),
     );
     const totalActiveStudents = activeStudents.size;
 

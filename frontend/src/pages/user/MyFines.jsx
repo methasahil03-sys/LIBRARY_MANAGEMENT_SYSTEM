@@ -4,6 +4,7 @@ import axios from "axios";
 import { Server_URL } from "../../utils/config";
 import { getAuthToken } from "../../utils/auth";
 import { showErrorToast } from "../../utils/toasthelper";
+import { FiDollarSign, FiAlertCircle, FiCheckCircle, FiInfo, FiCalendar } from "react-icons/fi";
 
 function MyFines() {
   const [fines, setFines]     = useState([]);
@@ -26,68 +27,124 @@ function MyFines() {
 
   useEffect(() => { fetchFines(); }, []);
 
-  return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", padding: "2rem" }}>
-      <div className="container">
-        <h2 style={{ color: "#2c3e50", fontWeight: 700, marginBottom: "1.5rem" }}>💰 My Fines</h2>
+  if (loading) return (
+    <div className="section-viewport" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+      <div className="spinner" />
+    </div>
+  );
 
-        {/* Summary card */}
-        <div className="row mb-4">
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #e74c3c", borderRadius: 12 }}>
-              <h6 className="text-muted">Total Due</h6>
-              <h2 style={{ color: "#e74c3c", fontWeight: 700 }}>₹{totalDue}</h2>
-            </div>
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--secondary-soft)", paddingBottom: "4rem" }}>
+      <div className="section-viewport">
+        
+        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+          <div style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: "12px", 
+            background: "var(--primary-glow)", 
+            padding: "8px 20px", 
+            borderRadius: "20px",
+            color: "var(--accent-purple)",
+            fontWeight: 700,
+            fontSize: "0.9rem",
+            marginBottom: "1rem"
+          }}>
+            <FiDollarSign /> FINANCE PORTAL
           </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #f39c12", borderRadius: 12 }}>
-              <h6 className="text-muted">Unpaid Fines</h6>
-              <h2 style={{ color: "#f39c12", fontWeight: 700 }}>{fines.filter(f => !f.paidStatus).length}</h2>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm text-center p-4" style={{ borderLeft: "4px solid #2ecc71", borderRadius: 12 }}>
-              <h6 className="text-muted">Paid Fines</h6>
-              <h2 style={{ color: "#2ecc71", fontWeight: 700 }}>{fines.filter(f => f.paidStatus).length}</h2>
-            </div>
-          </div>
+          <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--primary-deep)" }}>My Fines & Dues</h1>
         </div>
 
-        {loading ? (
-          <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
-        ) : fines.length === 0 ? (
-          <div className="card text-center p-5 shadow-sm border-0">
-            <div style={{ fontSize: "3rem" }}>✅</div>
-            <h5 className="mt-3 text-muted">No fines! You're all clear.</h5>
+        {/* SUMMARY DASHBOARD */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "1.5rem",
+          marginBottom: "3rem"
+        }}>
+          <SummaryCard 
+            title="Total Outstanding" 
+            value={`₹${totalDue}`} 
+            icon={<FiAlertCircle />} 
+            color="#ef4444" 
+            bg="#fef2f2"
+          />
+          <SummaryCard 
+            title="Unpaid Records" 
+            value={fines.filter(f => !f.paidStatus).length} 
+            icon={<FiInfo />} 
+            color="#f59e0b" 
+            bg="#fffbeb"
+          />
+          <SummaryCard 
+            title="Settled Fines" 
+            value={fines.filter(f => f.paidStatus).length} 
+            icon={<FiCheckCircle />} 
+            color="#10b981" 
+            bg="#f0fdf4"
+          />
+        </div>
+
+        {fines.length === 0 ? (
+          <div className="cotton-card" style={{ textAlign: "center", padding: "5rem" }}>
+            <div style={{ 
+              width: "80px", 
+              height: "80px", 
+              background: "#f0fdf4", 
+              color: "#10b981", 
+              borderRadius: "50%", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              margin: "0 auto 1.5rem"
+            }}>
+              <FiCheckCircle size={40} />
+            </div>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--primary-deep)", marginBottom: "0.5rem" }}>You're All Clear!</h2>
+            <p style={{ color: "var(--text-muted)" }}>No outstanding fines or overdue records found.</p>
           </div>
         ) : (
-          <div className="card shadow-sm border-0" style={{ borderRadius: 12 }}>
-            <div className="table-responsive">
-              <table className="table table-hover mb-0">
-                <thead style={{ background: "linear-gradient(90deg,#e74c3c,#c0392b)", color: "white" }}>
-                  <tr>
-                    <th className="p-3">#</th>
-                    <th className="p-3">Book</th>
-                    <th className="p-3">Due Date</th>
-                    <th className="p-3">Return Date</th>
-                    <th className="p-3">Days Overdue</th>
-                    <th className="p-3">Fine Amount</th>
-                    <th className="p-3">Status</th>
+          <div className="cotton-card" style={{ padding: "1.5rem", overflow: "hidden" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 8px" }}>
+                <thead>
+                  <tr style={{ textAlign: "left", color: "var(--text-muted)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    <th style={{ padding: "1rem" }}>Book Details</th>
+                    <th style={{ padding: "1rem" }}>Timeline</th>
+                    <th style={{ padding: "1rem" }}>Days Overdue</th>
+                    <th style={{ padding: "1rem" }}>Amount</th>
+                    <th style={{ padding: "1rem" }}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {fines.map((f, i) => (
-                    <tr key={f._id}>
-                      <td className="p-3">{i + 1}</td>
-                      <td className="p-3"><strong>{f.bookId?.title}</strong></td>
-                      <td className="p-3">{f.borrowId?.dueDate ? new Date(f.borrowId.dueDate).toLocaleDateString() : "—"}</td>
-                      <td className="p-3">{f.borrowId?.returnDate ? new Date(f.borrowId.returnDate).toLocaleDateString() : "—"}</td>
-                      <td className="p-3">{f.daysOverdue}</td>
-                      <td className="p-3"><strong style={{ color: "#e74c3c" }}>₹{f.amount}</strong></td>
-                      <td className="p-3">
-                        {f.paidStatus
-                          ? <span className="badge bg-success">Paid</span>
-                          : <span className="badge bg-danger">Unpaid</span>}
+                  {fines.map((f) => (
+                    <tr key={f._id} style={{ background: "var(--secondary-soft)" }}>
+                      <td style={{ padding: "1.5rem", borderRadius: "16px 0 0 16px" }}>
+                        <div style={{ fontWeight: 700, color: "var(--primary-deep)" }}>{f.bookId?.title}</div>
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>ISBN: {f.bookId?.isbn || "N/A"}</div>
+                      </td>
+                      <td style={{ padding: "1.5rem" }}>
+                        <div style={{ fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <FiCalendar size={14} /> {f.borrowId?.dueDate ? new Date(f.borrowId.dueDate).toLocaleDateString() : "—"}
+                        </div>
+                      </td>
+                      <td style={{ padding: "1.5rem", fontWeight: 600 }}>{f.daysOverdue} days</td>
+                      <td style={{ padding: "1.5rem" }}>
+                        <span style={{ fontWeight: 800, color: f.paidStatus ? "var(--text-muted)" : "#ef4444", fontSize: "1.1rem" }}>
+                          ₹{f.amount}
+                        </span>
+                      </td>
+                      <td style={{ padding: "1.5rem", borderRadius: "0 16px 16px 0" }}>
+                        <span style={{
+                          padding: "6px 12px",
+                          borderRadius: "10px",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          background: f.paidStatus ? "#f0fdf4" : "#fef2f2",
+                          color: f.paidStatus ? "#10b981" : "#ef4444"
+                        }}>
+                          {f.paidStatus ? "Settled" : "Unpaid"}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -97,9 +154,45 @@ function MyFines() {
           </div>
         )}
 
-        <p className="text-muted mt-3" style={{ fontSize: "0.85rem" }}>
-          ℹ️ Fines are calculated at ₹5/day after due date. Please contact the librarian to pay your fines.
-        </p>
+        <div style={{ 
+          marginTop: "2rem", 
+          padding: "1.5rem", 
+          background: "white", 
+          borderRadius: "16px", 
+          display: "flex", 
+          gap: "12px", 
+          alignItems: "center",
+          border: "1px solid var(--border-color)",
+          color: "var(--text-muted)",
+          fontSize: "0.9rem"
+        }}>
+          <FiInfo size={20} style={{ color: "var(--accent-purple)" }} />
+          <p>Fines are automatically calculated after the due date. Please visit the library counter to settle any outstanding dues.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryCard({ title, value, icon, color, bg }) {
+  return (
+    <div className="cotton-card" style={{ padding: "2rem", display: "flex", alignItems: "center", gap: "1.5rem" }}>
+      <div style={{ 
+        width: "56px", 
+        height: "56px", 
+        background: bg, 
+        color: color, 
+        borderRadius: "16px", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center",
+        fontSize: "1.5rem"
+      }}>
+        {icon}
+      </div>
+      <div>
+        <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--primary-deep)" }}>{value}</div>
+        <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: 600 }}>{title}</div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Server_URL } from "../../../utils/config";
 import { useNavigate } from "react-router-dom";
-import "./UpdatePassword.css";
+import "../register.css";
 
 function ResetPassword() {
   const { 
@@ -24,25 +24,23 @@ function ResetPassword() {
   };
 
   return (
-    <div className="reset-password-container">
-      <div className="reset-password-card">
-        <h2 className="reset-password-title">Reset Your Password</h2>
-        <p className="reset-password-subtitle">
-          Create a new password for your account
-        </p>
+    <div className="register-container" style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div className="register-card" style={{ maxWidth: "500px", margin: "0 auto" }}>
+        <div className="register-header">
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔑</div>
+          <h2 className="register-title">Reset Your Password</h2>
+          <p className="register-subtitle">
+            Create a new password for your account
+          </p>
+        </div>
         
-        <form className="reset-password-form" onSubmit={handleSubmit(onSubmit)}>
-          <div className="reset-password-form-group">
-            <label htmlFor="email" className="reset-password-label">
-              Email Address
-            </label>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-floating-custom">
             <input
               id="email"
               type="email"
-              className={`reset-password-input ${
-                errors.email ? "input-error" : ""
-              }`}
-              placeholder="Enter your registered email"
+              className="custom-input"
+              placeholder=" "
               {...register("email", { 
                 required: "Email is required",
                 pattern: {
@@ -51,22 +49,20 @@ function ResetPassword() {
                 }
               })}
             />
+            <label htmlFor="email" className="custom-label">
+              Email Address
+            </label>
             {errors.email && (
-              <p className="reset-password-error">{errors.email.message}</p>
+              <p className="error-text">{errors.email.message}</p>
             )}
           </div>
 
-          <div className="reset-password-form-group">
-            <label htmlFor="newPassword" className="reset-password-label">
-              New Password
-            </label>
+          <div className="form-floating-custom">
             <input
               id="newPassword"
               type="password"
-              className={`reset-password-input ${
-                errors.newPassword ? "input-error" : ""
-              }`}
-              placeholder="Enter new password (min 6 characters)"
+              className="custom-input"
+              placeholder=" "
               {...register("newPassword", {
                 required: "Password is required",
                 minLength: { 
@@ -75,43 +71,42 @@ function ResetPassword() {
                 }
               })}
             />
+            <label htmlFor="newPassword" className="custom-label">
+              New Password
+            </label>
             {errors.newPassword && (
-              <p className="reset-password-error">{errors.newPassword.message}</p>
+              <p className="error-text">{errors.newPassword.message}</p>
             )}
           </div>
 
-          <div className="reset-password-form-group">
-            <label htmlFor="confirmPassword" className="reset-password-label">
-              Confirm Password
-            </label>
+          <div className="form-floating-custom">
             <input
               id="confirmPassword"
               type="password"
-              className={`reset-password-input ${
-                errors.confirmPassword ? "input-error" : ""
-              }`}
-              placeholder="Confirm your new password"
+              className="custom-input"
+              placeholder=" "
               {...register("confirmPassword", {
                 required: "Please confirm your password",
                 validate: (value) => 
                   value === watch("newPassword") || "Passwords do not match"
               })}
             />
+            <label htmlFor="confirmPassword" className="custom-label">
+              Confirm Password
+            </label>
             {errors.confirmPassword && (
-              <p className="reset-password-error">{errors.confirmPassword.message}</p>
+              <p className="error-text">{errors.confirmPassword.message}</p>
             )}
           </div>
           
           <button 
             type="submit" 
-            className="reset-password-submit-btn"
+            className="register-btn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-        
-        
       </div>
     </div>
   );

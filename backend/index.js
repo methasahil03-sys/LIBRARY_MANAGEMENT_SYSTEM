@@ -46,6 +46,11 @@ app.use("/reports",      report);
 app.get("/", (_req, res) => res.send(" Library Management API is running..."));
 
 
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler caught:", err);
+  res.status(500).json({ error: true, message: err.message || "Internal Server Error" });
+});
+
 //  DB + Server 
 const PORT = process.env.PORT || 5000;
 const uri  = process.env.MONGO_URI;

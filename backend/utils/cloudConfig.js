@@ -11,9 +11,12 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "library_books", // Folder in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg"],
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
+    folder: "library_books",
+    allowed_formats: ["jpg", "png", "jpeg", "webp", "avif"],
+    public_id: (req, file) => {
+      const fileName = file.originalname.split(".")[0];
+      return `${Date.now()}-${fileName}`;
+    },
   },
 });
 

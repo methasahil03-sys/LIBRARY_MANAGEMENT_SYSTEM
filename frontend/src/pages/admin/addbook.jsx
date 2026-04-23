@@ -1,21 +1,29 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { 
+  BookPlus, 
+  Type, 
+  User, 
+  Tag, 
+  Hash, 
+  Building2, 
+  Calendar, 
+  Layers, 
+  IndianRupee, 
+  Image as ImageIcon,
+  FileText,
+  ShieldCheck,
+  ArrowRight,
+  AlertCircle
+} from "lucide-react";
 import { Server_URL } from "../../utils/config";
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
-import "./addbook.css";
+import "./AdminDashboard.css";
 
 const CATEGORIES = [
-  "Fiction",
-  "Non-fiction",
-  "Science",
-  "History",
-  "Technology",
-  "Biography",
-  "Philosophy",
-  "Arts & Design",
-  "Business",
-  "Education",
+  "Fiction", "Non-fiction", "Science", "History", "Technology",
+  "Biography", "Philosophy", "Arts & Design", "Business", "Education",
 ];
 
 const AddBookForm = () => {
@@ -33,15 +41,10 @@ const AddBookForm = () => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-
-      // Append all text fields except the file field
       Object.keys(data).forEach((key) => {
-        if (key !== "coverImage") {
-          formData.append(key, data[key]);
-        }
+        if (key !== "coverImage") formData.append(key, data[key]);
       });
 
-      // Append the image file if provided
       if (data.coverImage && data.coverImage[0]) {
         formData.append("coverImage", data.coverImage[0]);
       }
@@ -56,248 +59,216 @@ const AddBookForm = () => {
         },
       });
 
-      const { error, message } = response.data;
-
-      if (error) {
-        showErrorToast(message || "Failed to add book!");
+      if (response.data.error) {
+        showErrorToast(response.data.message || "Failed to add book!");
       } else {
-        showSuccessToast(message || "Book added successfully!");
+        showSuccessToast(response.data.message || "Book added successfully!");
         reset();
         setFileName("");
       }
     } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to add book!";
-      console.error("Add book error:", msg);
-      showErrorToast(msg);
+      showErrorToast(err.response?.data?.message || err.message || "Failed to add book!");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="addbook-page">
-      {/* ── Header ── */}
-      <div className="addbook-header">
-        <h1 className="addbook-title">
-          <span className="title-icon">📚</span>
-          Add a New Book
-        </h1>
-        <p className="addbook-subtitle">
-          Fill in the details below to add a new book to the library collection.
-        </p>
-      </div>
+    <div className="section-viewport">
+      <header className="centered-header">
+        <span className="badge badge-purple" style={{ padding: '0.6rem 1rem', marginBottom: '1rem', display: 'inline-flex' }}>
+           <BookPlus size={14} style={{ marginRight: '6px' }} /> Inventory Management
+        </span>
+        <h1>Add New Acquisition</h1>
+        <p>Register a new book into the library's digital inventory.</p>
+      </header>
 
-      {/* ── Card ── */}
-      <div className="addbook-card">
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="addbook-grid">
+      <div className="cool-form-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit(onSubmit)} className="fine-form-container">
+          
+          {/* Section: Basic Metadata */}
+          <div className="form-section">
+            <h3 className="section-title" style={{ color: 'var(--primary)', marginBottom: '1.5rem' }}>
+              <FileText size={20} /> Basic Information
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div style={{ gridColumn: 'span 2' }} className="fine-form-group">
+                <label className="fine-label"><Type size={14} /> Book Title *</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="text"
+                    className="fine-input-field"
+                    placeholder="Enter full book title"
+                    {...register("title", { required: "Title is required" })}
+                  />
+                  <Type size={18} className="fine-input-icon" />
+                </div>
+                {errors.title && <span className="fine-error-text"><AlertCircle size={12} /> {errors.title.message}</span>}
+              </div>
 
-            {/* ── Section: Basic Info ── */}
-            <span className="addbook-section-label">📖 Book Information</span>
+              <div className="fine-form-group">
+                <label className="fine-label"><User size={14} /> Author *</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="text"
+                    className="fine-input-field"
+                    placeholder="Primary author name"
+                    {...register("author", { required: "Author is required" })}
+                  />
+                  <User size={18} className="fine-input-icon" />
+                </div>
+                {errors.author && <span className="fine-error-text"><AlertCircle size={12} /> {errors.author.message}</span>}
+              </div>
 
-            {/* Title */}
-            <div className="addbook-group addbook-full">
-              <label className="addbook-label" htmlFor="ab-title">Book Title *</label>
-              <input
-                id="ab-title"
-                type="text"
-                className="addbook-input"
-                placeholder="e.g. The Great Gatsby"
-                {...register("title", { required: "Title is required" })}
-              />
-              {errors.title && (
-                <span className="addbook-error">⚠ {errors.title.message}</span>
-              )}
-            </div>
-
-            {/* Author */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-author">Author *</label>
-              <input
-                id="ab-author"
-                type="text"
-                className="addbook-input"
-                placeholder="e.g. F. Scott Fitzgerald"
-                {...register("author", { required: "Author is required" })}
-              />
-              {errors.author && (
-                <span className="addbook-error">⚠ {errors.author.message}</span>
-              )}
-            </div>
-
-            {/* Category */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-category">Category *</label>
-              <select
-                id="ab-category"
-                className="addbook-select"
-                {...register("category", { required: "Category is required" })}
-              >
-                <option value="">Select a category</option>
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              {errors.category && (
-                <span className="addbook-error">⚠ {errors.category.message}</span>
-              )}
-            </div>
-
-            {/* ISBN */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-isbn">ISBN *</label>
-              <input
-                id="ab-isbn"
-                type="text"
-                className="addbook-input"
-                placeholder="e.g. 978-3-16-148410-0"
-                {...register("isbn", { required: "ISBN is required" })}
-              />
-              {errors.isbn && (
-                <span className="addbook-error">⚠ {errors.isbn.message}</span>
-              )}
-            </div>
-
-            {/* Publisher */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-publisher">Publisher</label>
-              <input
-                id="ab-publisher"
-                type="text"
-                className="addbook-input"
-                placeholder="e.g. Penguin Books"
-                {...register("publisher")}
-              />
-            </div>
-
-            {/* Publication Year */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-year">Publication Year</label>
-              <input
-                id="ab-year"
-                type="number"
-                className="addbook-input"
-                placeholder="e.g. 2023"
-                min="1000"
-                max={new Date().getFullYear()}
-                {...register("publicationYear", {
-                  min: { value: 1000, message: "Enter a valid year" },
-                  max: {
-                    value: new Date().getFullYear(),
-                    message: "Year cannot be in the future",
-                  },
-                })}
-              />
-              {errors.publicationYear && (
-                <span className="addbook-error">⚠ {errors.publicationYear.message}</span>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="addbook-divider" />
-            <span className="addbook-section-label">📦 Inventory & Pricing</span>
-
-            {/* Total Copies */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-copies">Total Copies *</label>
-              <input
-                id="ab-copies"
-                type="number"
-                className="addbook-input"
-                placeholder="e.g. 5"
-                {...register("totalCopies", {
-                  required: "Total copies is required",
-                  min: { value: 1, message: "Must be at least 1" },
-                })}
-              />
-              {errors.totalCopies && (
-                <span className="addbook-error">⚠ {errors.totalCopies.message}</span>
-              )}
-            </div>
-
-            {/* Price */}
-            <div className="addbook-group">
-              <label className="addbook-label" htmlFor="ab-price">Price (₹)</label>
-              <input
-                id="ab-price"
-                type="number"
-                step="0.01"
-                className="addbook-input"
-                placeholder="e.g. 299.00"
-                {...register("price", {
-                  min: { value: 0, message: "Price cannot be negative" },
-                })}
-              />
-              {errors.price && (
-                <span className="addbook-error">⚠ {errors.price.message}</span>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="addbook-divider" />
-            <span className="addbook-section-label">🖼 Cover & Description</span>
-
-            {/* Cover Image */}
-            <div className="addbook-group addbook-full">
-              <label className="addbook-label">Book Cover Image</label>
-              <div className="addbook-file-wrap">
-                <input
-                  id="ab-cover"
-                  type="file"
-                  accept="image/png, image/jpeg, image/jpg"
-                  className="addbook-file-input"
-                  {...register("coverImage")}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    setFileName(file ? file.name : "");
-                  }}
-                />
-                <label htmlFor="ab-cover" className="addbook-file-btn">
-                  📎 Choose Image
-                </label>
-                <span className="addbook-file-name">
-                  {fileName || "No file chosen — JPG, PNG accepted"}
-                </span>
+              <div className="fine-form-group">
+                <label className="fine-label"><Tag size={14} /> Category *</label>
+                <div className="fine-input-wrapper">
+                  <select
+                    className="fine-select-field"
+                    style={{ paddingLeft: '3rem' }}
+                    {...register("category", { required: "Category is required" })}
+                  >
+                    <option value="">Select Genre</option>
+                    {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
+                  <Tag size={18} className="fine-input-icon" />
+                </div>
+                {errors.category && <span className="fine-error-text"><AlertCircle size={12} /> {errors.category.message}</span>}
               </div>
             </div>
-
-            {/* Description */}
-            <div className="addbook-group addbook-full">
-              <label className="addbook-label" htmlFor="ab-desc">Description *</label>
-              <textarea
-                id="ab-desc"
-                className="addbook-textarea"
-                placeholder="Brief description of the book..."
-                rows={4}
-                {...register("description", {
-                  required: "Description is required",
-                })}
-              />
-              {errors.description && (
-                <span className="addbook-error">⚠ {errors.description.message}</span>
-              )}
-            </div>
-
           </div>
 
-          {/* ── Submit ── */}
-          <div className="addbook-submit-wrap">
-            <button
-              id="ab-submit"
-              type="submit"
-              className="addbook-submit"
-              disabled={isSubmitting}
-            >
+          <div style={{ height: '1px', background: 'var(--glass-border)', margin: '1rem 0' }}></div>
+
+          {/* Section: Publication & Logistics */}
+          <div className="form-section">
+            <h3 className="section-title" style={{ color: 'var(--accent-blue)', marginBottom: '1.5rem' }}>
+              <Building2 size={20} /> Publication & Logistics
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+              <div className="fine-form-group">
+                <label className="fine-label"><Hash size={14} /> ISBN Number *</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="text"
+                    className="fine-input-field"
+                    placeholder="ISBN-13"
+                    {...register("isbn", { required: "ISBN is required" })}
+                  />
+                  <Hash size={18} className="fine-input-icon" />
+                </div>
+                {errors.isbn && <span className="fine-error-text"><AlertCircle size={12} /> {errors.isbn.message}</span>}
+              </div>
+
+              <div className="fine-form-group">
+                <label className="fine-label"><Building2 size={14} /> Publisher</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="text"
+                    className="fine-input-field"
+                    placeholder="Publishing house"
+                    {...register("publisher")}
+                  />
+                  <Building2 size={18} className="fine-input-icon" />
+                </div>
+              </div>
+
+              <div className="fine-form-group">
+                <label className="fine-label"><Calendar size={14} /> Release Year</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="number"
+                    className="fine-input-field"
+                    placeholder="e.g. 2024"
+                    {...register("publicationYear")}
+                  />
+                  <Calendar size={18} className="fine-input-icon" />
+                </div>
+              </div>
+
+              <div className="fine-form-group">
+                <label className="fine-label"><Layers size={14} /> Total Copies *</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="number"
+                    className="fine-input-field"
+                    placeholder="No. of copies"
+                    {...register("totalCopies", { required: "Required", min: 1 })}
+                  />
+                  <Layers size={18} className="fine-input-icon" />
+                </div>
+                {errors.totalCopies && <span className="fine-error-text"><AlertCircle size={12} /> {errors.totalCopies.message}</span>}
+              </div>
+
+              <div className="fine-form-group">
+                <label className="fine-label"><IndianRupee size={14} /> Purchase Price</label>
+                <div className="fine-input-wrapper">
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="fine-input-field"
+                    placeholder="0.00"
+                    {...register("price")}
+                  />
+                  <IndianRupee size={18} className="fine-input-icon" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ height: '1px', background: 'var(--glass-border)', margin: '1rem 0' }}></div>
+
+          {/* Section: Visuals & Narrative */}
+          <div className="form-section">
+            <h3 className="section-title" style={{ color: 'var(--accent-pink)', marginBottom: '1.5rem' }}>
+              <ImageIcon size={20} /> Presentation
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+              <div className="fine-form-group">
+                <label className="fine-label"><ImageIcon size={14} /> Cover Artwork</label>
+                <div style={{ 
+                  border: '2px dashed var(--glass-border)', 
+                  borderRadius: '16px', 
+                  padding: '2rem', 
+                  textAlign: 'center',
+                  background: '#f8fafc',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  cursor: 'pointer'
+                }}>
+                  <input
+                    type="file"
+                    style={{ opacity: 0, position: 'absolute', inset: 0, cursor: 'pointer' }}
+                    {...register("coverImage")}
+                    onChange={e => setFileName(e.target.files?.[0]?.name || "")}
+                  />
+                  <ImageIcon size={40} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
+                  <p style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>
+                    {fileName || "Click to upload or drag book cover"}
+                  </p>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Supported formats: JPG, PNG, WEBP</p>
+                </div>
+              </div>
+
+              <div className="fine-form-group">
+                <label className="fine-label"><FileText size={14} /> Book Synopsis *</label>
+                <textarea
+                  className="fine-textarea-field"
+                  style={{ minHeight: '120px' }}
+                  placeholder="Provide a brief summary of the book content..."
+                  {...register("description", { required: "Description is required" })}
+                ></textarea>
+                {errors.description && <span className="fine-error-text"><AlertCircle size={12} /> {errors.description.message}</span>}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '1.5rem' }}>
+            <button type="submit" className="fine-button-primary" disabled={isSubmitting}>
               {isSubmitting ? (
-                <>
-                  <span className="btn-spinner" />
-                  Adding Book…
-                </>
+                <><div className="spinner" style={{ width: '20px', height: '20px', borderThickness: '2px' }} /> Cataloging...</>
               ) : (
-                <>✚ Add Book</>
+                <><ShieldCheck size={20} /> Confirm Registration <ArrowRight size={18} /></>
               )}
             </button>
           </div>
@@ -308,3 +279,4 @@ const AddBookForm = () => {
 };
 
 export default AddBookForm;
+

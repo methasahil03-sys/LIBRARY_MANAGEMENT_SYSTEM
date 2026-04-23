@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Server_URL } from "../../../utils/config";
 import { useNavigate } from "react-router-dom";
-import "./ForgotPassword.css"; 
+import "../register.css"; 
 
 function ForgotPassword() {
   const { 
@@ -23,25 +23,23 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-card">
-        <h2 className="forgot-password-title">Forgot Password</h2>
-        <p className="forgot-password-subtitle">
-          Enter your email to receive a password reset OTP
-        </p>
+    <div className="register-container" style={{ minHeight: "100vh", padding: "2rem" }}>
+      <div className="register-card" style={{ maxWidth: "500px", margin: "0 auto" }}>
+        <div className="register-header">
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✉️</div>
+          <h2 className="register-title">Forgot Password</h2>
+          <p className="register-subtitle">
+            Enter your email to receive a password reset OTP
+          </p>
+        </div>
         
-        <form className="forgot-password-form" onSubmit={handleSubmit(onSubmit)}>
-          <div className="forgot-password-form-group">
-            <label htmlFor="email" className="forgot-password-label">
-              Email Address
-            </label>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-floating-custom">
             <input
               id="email"
               type="email"
-              className={`forgot-password-input ${
-                errors.email ? "input-error" : ""
-              }`}
-              placeholder="Enter your registered email"
+              className="custom-input"
+              placeholder=" "
               {...register("email", { 
                 required: "Email is required",
                 pattern: {
@@ -50,23 +48,26 @@ function ForgotPassword() {
                 }
               })}
             />
+            <label htmlFor="email" className="custom-label">
+              Email Address
+            </label>
             {errors.email && (
-              <p className="forgot-password-error">{errors.email.message}</p>
+              <p className="error-text">{errors.email.message}</p>
             )}
           </div>
           
           <button 
             type="submit" 
-            className="forgot-password-submit-btn"
+            className="register-btn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Sending OTP..." : "Send OTP"}
           </button>
         </form>
         
-        <div className="forgot-password-footer">
-          Remember your password?{" "}
-          <a href="/login" className="forgot-password-login-link">
+        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <span style={{ color: "#b8aad8", fontSize: "0.88rem" }}>Remember your password? </span>
+          <a href="/login" style={{ color: "#8b5cf6", fontWeight: 700, fontSize: "0.88rem", textDecoration: "none" }}>
             Login here
           </a>
         </div>

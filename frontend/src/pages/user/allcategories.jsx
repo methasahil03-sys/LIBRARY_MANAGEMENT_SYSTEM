@@ -4,7 +4,8 @@ import axios from "axios";
 import "./allcategories.css";
 import { Link } from "react-router-dom";
 import Loader from "../../components/Preloader";
-import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
+import { showErrorToast } from "../../utils/toasthelper";
+import { FiGrid, FiArrowRight, FiFilter } from "react-icons/fi";
 
 export default function ViewAllCategories() {
   const [books, setBooks] = useState([]);
@@ -27,7 +28,7 @@ export default function ViewAllCategories() {
 
         const categoryCountMap = {};
         books.forEach((book) => {
-          const cat = book.category;
+          const cat = book.category || "General";
           categoryCountMap[cat] = (categoryCountMap[cat] || 0) + 1;
         });
 
@@ -47,7 +48,7 @@ export default function ViewAllCategories() {
       setFilteredBooks(books);
     } else {
       const filtered = books.filter(
-        (book) => book.category === selectedCategory
+        (book) => (book.category || "General") === selectedCategory
       );
       setFilteredBooks(filtered);
     }
@@ -57,81 +58,126 @@ export default function ViewAllCategories() {
     fetchCategories();
   }, []);
 
-  return (
-    <div className="all-categories-container">
-      <div className="all-categories-row">
-        {/* Sidebar */}
-        <nav className="all-categories-sidebar">
-          <h5 className="all-categories-sidebar-title">Categories</h5>
-          <ul className="all-categories-nav">
-            <li
-              className={`all-categories-nav-item ${
-                activeCategory === "All" ? "active" : ""
-              }`}
-              onClick={() => handleCategoryClick("All")}
-            >
-              All
-            </li>
-            {[...new Set(books.map((book) => book.category))].map(
-              (category, index) => (
-                <li
-                  key={index}
-                  className={`all-categories-nav-item ${
-                    activeCategory === category ? "active" : ""
-                  }`}
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  {category}
-                </li>
-              )
-            )}
-          </ul>
-        </nav>
+  const uniqueCategories = ["All", ...new Set(books.map((book) => book.category || "General"))];
 
-        {/* Main Content */}
-        <main className="all-categories-main">
-          <h2 className="all-categories-main-title">Explore All Categories</h2>
-          {loading ? (
-            <Loader />
-          ) : filterBooks.length > 0 ? (
-            <div className="all-categories-grid">
-              {[...new Set(filterBooks.map((book) => book.category))].map(
-                (category, index) => (
-                  <div key={index} className="all-categories-card-wrapper">
-                    <div className="all-categories-card shadow-sm">
-                      <img
-                        src={
-                          filterBooks.find(
-                            (b) => b.category === category
-                          )?.coverImage
-                        }
-                        className="all-categories-card-img"
-                        alt={category}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src =
-                            "https://via.placeholder.com/300x400?text=No+Image";
-                        }}
-                      />
-                      <div className="all-categories-card-body">
-                        <h5 className="all-categories-card-title">
-                          {category}
-                        </h5>
-                        <p className="text-muted">
-                          Books: {categoryCounts[category] || 0}
-                        </p>
-                        <Link to="/books" className="all-categories-btn">
-                          Explore
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          ) : (
-            <div className="all-categories-empty">
-              <p>No books found in this category.</p>
+  if (loading) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--secondary-soft)" }}>
+      <Loader />
+    </div>
+  );
+
+  return (
+    <div className="categories-viewport" style={{ background: "var(--secondary-soft)", minHeight: "100vh" }}>
+      <div className="section-viewport" style={{ display: "flex", gap: "3rem", alignItems: "flex-start" }}>
+        
+        {/* SIDEBAR NAVIGATION */}
+        <aside style={{ 
+          width: "280px", 
+          position: "sticky", 
+          top: "2rem",
+          background: "white",
+          padding: "2rem",
+          borderRadius: "24px",
+          border: "1px solid var(--border-color)",
+          boxShadow: "var(--card-shadow)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "2rem", color: "var(--primary-deep)" }}>
+            <FiFilter size={20} />
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 800 }}>Filter</h3>
+          </div>
+          
+          <ul style={{ listStyle: "none" }}>
+            {uniqueCategories.map((cat) => (
+              <li 
+                key={cat}
+                onClick={() => handleCategoryClick(cat)}
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: "12px",
+                  cursor: "pointer",
+                  marginBottom: "8px",
+                  fontSize: "0.95rem",
+                  fontWeight: 600,
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  background: activeCategory === cat ? "var(--primary-glow)" : "transparent",
+                  color: activeCategory === cat ? "var(--accent-purple)" : "var(--text-muted)"
+                }}
+              >
+                <span>{cat}</span>
+                {cat !== "All" && (
+                  <span style={{ 
+                    fontSize: "0.75rem", 
+                    background: activeCategory === cat ? "white" : "var(--secondary-soft)", 
+                    padding: "2px 8px", 
+                    borderRadius: "10px" 
+                  }}>
+                    {categoryCounts[cat] || 0}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        {/* MAIN CONTENT GRID */}
+        <main style={{ flex: 1 }}>
+          <div style={{ marginBottom: "3rem" }}>
+            <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--primary-deep)", marginBottom: "0.75rem" }}>Explore Categories</h1>
+            <p style={{ color: "var(--text-muted)", fontSize: "1.1rem" }}>
+              Showing {activeCategory === "All" ? "all" : activeCategory} resources in the library
+            </p>
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "2rem"
+          }}>
+            {[...new Set(filterBooks.map((book) => book.category || "General"))].map((cat) => (
+              <div key={cat} className="cotton-card" style={{ overflow: "hidden" }}>
+                <div style={{ height: "240px", overflow: "hidden", position: "relative" }}>
+                  <img
+                    src={filterBooks.find((b) => (b.category || "General") === cat)?.coverImage || "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80"}
+                    alt={cat}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <div style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "linear-gradient(to bottom, transparent, rgba(0,0,0,0.4))"
+                  }} />
+                </div>
+                <div style={{ padding: "2rem" }}>
+                  <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--primary-deep)", marginBottom: "0.5rem" }}>{cat}</h3>
+                  <p style={{ color: "var(--text-muted)", marginBottom: "1.5rem", fontSize: "0.9rem" }}>
+                    {categoryCounts[cat] || 0} books available
+                  </p>
+                  <Link 
+                    to={`/books?category=${encodeURIComponent(cat)}`} 
+                    style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: "8px", 
+                      textDecoration: "none", 
+                      color: "var(--accent-purple)", 
+                      fontWeight: 700,
+                      fontSize: "0.95rem"
+                    }}
+                  >
+                    View Books <FiArrowRight />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filterBooks.length === 0 && (
+            <div style={{ textAlign: "center", padding: "4rem", color: "var(--text-muted)" }}>
+              <FiGrid size={48} style={{ marginBottom: "1rem", opacity: 0.3 }} />
+              <p>No books found in this collection.</p>
             </div>
           )}
         </main>

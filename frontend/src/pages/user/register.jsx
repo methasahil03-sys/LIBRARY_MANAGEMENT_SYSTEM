@@ -2,6 +2,7 @@ import {useForm} from "react-hook-form";
 import axios from "axios";
 import { Server_URL } from "../../utils/config";
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
+import "./register.css";
 
 
 export default function Register(){
@@ -25,47 +26,78 @@ export default function Register(){
       
     };
     return(
-        <div className="container mt-4">
-        <h2 className="text-center">User Registration</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded shadow">
-  
-      
-          <div className="mb-3">
-            <label className="form-label">Name</label>
-            <input type="text" className="form-control" {...register("name", { required: "Name is required" })} />
-            {errors.name && <p className="text-danger">{errors.name.message}</p>}
+      <div className="register-container">
+        <div className="register-card">
+          <div className="register-header">
+            <h2 className="register-title">Create Account</h2>
+            <p className="register-subtitle">Join the Library Management System</p>
           </div>
-  
-          <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input type="email" className="form-control" {...register("email", { required: "Email is required" })} />
-            {errors.email && <p className="text-danger">{errors.email.message}</p>}
-          </div>
-  
-       
-          <div className="mb-3">
-            <label className="form-label">Password</label>
-            <input type="password" className="form-control" {...register("password", { required: "Password is required" })} />
-            {errors.password && <p className="text-danger">{errors.password.message}</p>}
-          </div>
-  
-     
-          <div className="mb-3">
-            <label className="form-label">Stream</label>
-            <input type="text" className="form-control" {...register("stream", { required: "Stream is required" })} />
-            {errors.stream && <p className="text-danger">{errors.stream.message}</p>}
-          </div>
-  
-       
-          <div className="mb-3">
-            <label className="form-label">Year</label>
-            <input type="number" className="form-control" {...register("year", { required: "Year is required" })} />
-            {errors.year && <p className="text-danger">{errors.year.message}</p>}
-          </div>
-  
-    
-          <button type="submit" className="btn btn-primary w-100">Register</button>
-        </form>
+          
+          <form onSubmit={handleSubmit(onSubmit)}>
+            
+            <div className="form-floating-custom">
+              <input 
+                type="text" 
+                id="name"
+                className="custom-input" 
+                placeholder=" "
+                {...register("name", { required: "Name is required" })} 
+              />
+              <label htmlFor="name" className="custom-label">Full Name</label>
+              {errors.name && <p className="error-text">{errors.name.message}</p>}
+            </div>
+
+            <div className="form-floating-custom">
+              <input 
+                type="email" 
+                id="email"
+                className="custom-input" 
+                placeholder=" "
+                {...register("email", { required: "Email is required" })} 
+              />
+              <label htmlFor="email" className="custom-label">Email Address</label>
+              {errors.email && <p className="error-text">{errors.email.message}</p>}
+            </div>
+
+            <div className="form-floating-custom">
+              <input 
+                type="password" 
+                id="password"
+                className="custom-input" 
+                placeholder=" "
+                {...register("password", { required: "Password is required" })} 
+              />
+              <label htmlFor="password" className="custom-label">Password</label>
+              {errors.password && <p className="error-text">{errors.password.message}</p>}
+            </div>
+
+            <div className="form-floating-custom">
+              <input 
+                type="text" 
+                id="stream"
+                className="custom-input" 
+                placeholder=" "
+                {...register("stream", { required: "Stream is required" })} 
+              />
+              <label htmlFor="stream" className="custom-label">Stream (e.g. Science, Arts)</label>
+              {errors.stream && <p className="error-text">{errors.stream.message}</p>}
+            </div>
+
+            <div className="form-floating-custom">
+              <input 
+                type="number" 
+                id="year"
+                className="custom-input" 
+                placeholder=" "
+                {...register("year", { required: "Year is required" })} 
+              />
+              <label htmlFor="year" className="custom-label">Current Year</label>
+              {errors.year && <p className="error-text">{errors.year.message}</p>}
+            </div>
+
+            <button type="submit" className="register-btn">Register</button>
+          </form>
+        </div>
       </div>
     )
 }

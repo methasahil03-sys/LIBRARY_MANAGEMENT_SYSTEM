@@ -67,15 +67,13 @@ userController.login = async (req, res) => {
       email: { $regex: `^${email}$`, $options: "i" },
     });
 
-    console.log("LOGIN email:", email);
-    console.log("LOGIN user doc found:", !!user, user?.email, user?.role);
+
 
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password || "");
-    console.log("LOGIN bcrypt match:", isMatch);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });

@@ -51,18 +51,14 @@ export default function FineManagement() {
         .ftab.active-unpaid{background:#ef4444;border-color:#ef4444;color:#fff;}
         .ftab.active-paid{background:#10b981;border-color:#10b981;color:#fff;}
       `}</style>
-      <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",background:"#f3f0fb",minHeight:"100vh",padding:"2rem 2.5rem"}}>
-
-        {/* Header */}
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"1.75rem",flexWrap:"wrap",gap:"1rem"}}>
-          <div style={{display:"flex",alignItems:"center",gap:14}}>
-            <span style={{width:44,height:44,background:"linear-gradient(135deg,#fca5a5,#fde68a)",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.2rem",boxShadow:"0 4px 14px rgba(239,68,68,.2)"}}>💰</span>
-            <div>
-              <h2 style={{fontSize:"1.65rem",fontWeight:800,color:"#2a2050",letterSpacing:"-.02em"}}>Fine Management</h2>
-              <p style={{color:"#b8aad8",fontSize:".83rem",marginTop:2}}>Track overdue fines and manage payments</p>
-            </div>
-          </div>
-        </div>
+      <div className="section-viewport">
+        <header className="centered-header">
+          <span className="badge badge-purple" style={{ padding: '0.6rem 1rem', marginBottom: '1rem', display: 'inline-flex' }}>
+             💰 Fine Management
+          </span>
+          <h1>Overdue Penalty Tracker</h1>
+          <p>Monitor system-wide fines and verify payment records.</p>
+        </header>
 
         {/* Stat cards */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:"1rem",marginBottom:"1.75rem"}}>
