@@ -11,7 +11,7 @@
 
 A full-featured, role-based Library Management System built with the **MERN stack**. Manage books, members, borrowing, reservations, fines, and reports — all in one place.
 
-**🌐 Live Demo:** [library-management-app-karan.vercel.app](https://library-management-app-karan.vercel.app)
+**🌐 Live Demo:**
 
 </div>
 
