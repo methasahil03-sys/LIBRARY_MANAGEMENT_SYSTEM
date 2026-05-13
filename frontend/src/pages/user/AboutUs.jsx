@@ -31,7 +31,7 @@ const AboutUs = () => {
               </p>
             </div>
             <div className="about-mission-image">
-              <img src="/assets/libraryinterior.jpg" alt="Library interior" className="about-mission-img" />
+              <img src="/assets/libraryinterior.png" alt="Library interior" className="about-mission-img" />
             </div>
           </div>
         </div>
@@ -109,17 +109,17 @@ const AboutUs = () => {
           <h2 className="about-section-title">Our Facilities</h2>
           <div className="about-facilities-grid">
             <div className="about-facility-card">
-              <img src="/assets/readingroom.webp" alt="Reading Room" className="about-facility-img" />
+              <img src="/assets/readingroom.png" alt="Reading Room" className="about-facility-img" />
               <h3 className="about-facility-name">Main Reading Room</h3>
               <p className="about-facility-description">Quiet study space with natural lighting and comfortable seating for 200 students.</p>
             </div>
             <div className="about-facility-card">
-              <img src="/assets/computerlab.jpeg" alt="Computer Lab" className="about-facility-img" />
+              <img src="/assets/computerlab.png" alt="Computer Lab" className="about-facility-img" />
               <h3 className="about-facility-name">Computer Lab</h3>
               <p className="about-facility-description">40 workstations with academic software and high-speed internet access.</p>
             </div>
             <div className="about-facility-card">
-              <img src="/assets/groupstudyroom.jpeg" alt="Group Study" className="about-facility-img" />
+              <img src="/assets/groupstudyroom.png" alt="Group Study" className="about-facility-img" />
               <h3 className="about-facility-name">Group Study Rooms</h3>
               <p className="about-facility-description">12 bookable rooms equipped with whiteboards and presentation displays.</p>
             </div>

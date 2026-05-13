@@ -101,11 +101,10 @@ const Books = () => {
 
 
   return (
-    <div className="container-fluid books-container">
-      <div className="row">
-      
-        <div className="col-md-3 p-4 sidebar">
-          <h4 className="text-center mb-4">📚 Categories</h4>
+    <div className="books-container">
+        
+        <div className="sidebar">
+          <h4>📚 Categories</h4>
           <div className="category-scroll">
             {categories.map((category, index) => (
               <div
@@ -121,26 +120,24 @@ const Books = () => {
           </div>
         </div>
 
-        <div className="col-md-9 main-content">
-          <div className="search-header p-3">
+        <div className="main-content">
+          <div className="search-header">
             <h2 className="page-title">All Books</h2>
             <div className="search-box">
               <input
                 type="text"
-                className="form-control"
                 placeholder="Search by title..."
                 value={searchTerm}
                 onChange={handleSearch}
               />
-              <i className="bi bi-search search-icon"></i>
+              <span className="search-icon">🔍</span>
             </div>
           </div>
 
           {isLoading ? (
             <div className="loading-spinner">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+              <div className="spinner-border" role="status"></div>
+              <span style={{ color: '#8b80a9', fontSize: '0.9rem' }}>Loading books...</span>
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="books-grid">
@@ -164,13 +161,13 @@ const Books = () => {
                       <span className="card-price">₹{book.price}</span>
                       <div className="card-actions">
                         <button
-                          className="btn btn-outline-primary btn-sm"
+                          className="btn btn-outline-primary"
                           onClick={() => bookDetails(book._id)}
                         >
                           Details
                         </button>
                         <button
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary"
                           onClick={() => issueBook(book._id)}
                         >
                           Issue
@@ -183,13 +180,12 @@ const Books = () => {
             </div>
           ) : (
             <div className="no-books-found">
-              <i className="bi bi-book-slash"></i>
+              <span>📖</span>
               <h4>No books found!</h4>
               <p>Try adjusting your search or category filter</p>
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 };

@@ -28,6 +28,152 @@ const TABS = [
   { key: "mostBorrowed", label: "Popular Titles",    icon: TrendingUp },
 ];
 
+
+const S = {
+  page: {
+    display: "flex",
+    gap: "2rem",
+    padding: "2rem 3rem",
+    maxWidth: "1500px",
+    margin: "0 auto",
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    minHeight: "calc(100vh - 140px)",
+  },
+  aside: {
+    width: "260px",
+    flexShrink: 0,
+    paddingRight: "1.5rem",
+  },
+  asideLabel: {
+    fontSize: "0.7rem",
+    fontWeight: 700,
+    color: "#94a3b8",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+    padding: "0 1rem",
+    marginBottom: "1.25rem",
+  },
+  navList: {
+    listStyle: "none",
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.4rem",
+    margin: 0,
+    padding: 0,
+  },
+  navBtn: (isActive) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: "0.75rem",
+    padding: "0.8rem 1.1rem",
+    borderRadius: "12px",
+    border: "none",
+    background: isActive
+      ? "linear-gradient(135deg, #8b5cf6, #6366f1)"
+      : "transparent",
+    color: isActive ? "#ffffff" : "#6b5e95",
+    fontFamily: "inherit",
+    fontSize: "0.9rem",
+    fontWeight: isActive ? 700 : 500,
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+    width: "100%",
+    textAlign: "left",
+    boxShadow: isActive ? "0 6px 18px rgba(139, 92, 246, 0.3)" : "none",
+  }),
+  navIcon: {
+    width: 18,
+    height: 18,
+    flexShrink: 0,
+  },
+  exportCard: {
+    marginTop: "2rem",
+    padding: "1.5rem",
+    background: "linear-gradient(135deg, rgba(139,92,246,0.08), rgba(99,102,241,0.06))",
+    borderRadius: "20px",
+    border: "1px solid #e9e5f5",
+  },
+  exportTitle: {
+    fontSize: "0.85rem",
+    fontWeight: 700,
+    color: "#8b5cf6",
+    marginBottom: "0.5rem",
+  },
+  exportDesc: {
+    fontSize: "0.78rem",
+    color: "#8b80a9",
+    marginBottom: "1rem",
+    lineHeight: 1.5,
+  },
+  exportBtn: {
+    width: "100%",
+    padding: "0.7rem 1rem",
+    borderRadius: "14px",
+    background: "linear-gradient(135deg, #8b5cf6, #a855f7)",
+    color: "#ffffff",
+    border: "none",
+    fontFamily: "inherit",
+    fontSize: "0.82rem",
+    fontWeight: 700,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    boxShadow: "0 6px 18px rgba(139, 92, 246, 0.25)",
+    transition: "all 0.25s ease",
+  },
+  mainContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  headerWrap: {
+    textAlign: "center",
+    marginBottom: "2.5rem",
+  },
+  headerBadge: {
+    padding: "0.5rem 1rem",
+    background: "#f5f3ff",
+    color: "#7c3aed",
+    borderRadius: "10px",
+    fontSize: "0.78rem",
+    fontWeight: 700,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    marginBottom: "1rem",
+    border: "1px solid #e9e5f5",
+  },
+  headerTitle: {
+    fontSize: "2rem",
+    fontWeight: 800,
+    color: "#1e1b4b",
+    marginBottom: "0.4rem",
+    letterSpacing: "-0.03em",
+  },
+  headerSub: {
+    fontSize: "0.92rem",
+    color: "#8b80a9",
+    fontWeight: 500,
+  },
+  loadingWrap: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "100px 20px",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  spinner: {
+    width: "44px",
+    height: "44px",
+    border: "3px solid #e4ddf5",
+    borderTopColor: "#8b5cf6",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
+  },
+};
+
 export default function Reports() {
   const [tab, setTab]                   = useState("summary");
   const [summary, setSummary]           = useState(null);
@@ -76,51 +222,75 @@ export default function Reports() {
   };
 
   return (
-    <div className="section-viewport" style={{ padding: 0, display: 'flex', gap: '2rem' }}>
-      {/* Sub-navigation */}
-      <aside style={{ width: '260px', flexShrink: 0, borderRight: '1px solid var(--border-color)', paddingRight: '1.5rem' }}>
-        <p className="sidebar-section-label">Report Category</p>
-        <ul className="admin-nav">
+    <div style={S.page}>
+      {/* ── Sub-navigation ── */}
+      <aside style={S.aside}>
+        <p style={S.asideLabel}>Report Category</p>
+        <ul style={S.navList}>
           {TABS.map(t => (
-            <li key={t.key} className="admin-nav-item">
-              <button 
-                className={`admin-nav-btn ${tab === t.key ? "active" : ""}`} 
+            <li key={t.key}>
+              <button
+                style={S.navBtn(tab === t.key)}
                 onClick={() => setTab(t.key)}
+                onMouseEnter={e => {
+                  if (tab !== t.key) {
+                    e.currentTarget.style.background = "rgba(139,92,246,0.06)";
+                    e.currentTarget.style.color = "#8b5cf6";
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (tab !== t.key) {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "#6b5e95";
+                  }
+                }}
               >
-                <t.icon className="nav-icon" /> {t.label}
+                <t.icon style={S.navIcon} /> {t.label}
               </button>
             </li>
           ))}
         </ul>
-        <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--primary-glow)', borderRadius: '20px' }}>
-           <h4 style={{ fontSize: '0.8rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>Export Data</h4>
-           <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '1rem' }}>Generate official records for the current selection.</p>
-           <button className="fine-button-primary" style={{ padding: '0.6rem', fontSize: '0.8rem' }}>
-              <Download size={14} /> Download PDF
-           </button>
+        <div style={S.exportCard}>
+          <h4 style={S.exportTitle}>Export Data</h4>
+          <p style={S.exportDesc}>Generate official records for the current selection.</p>
+          <button
+            style={S.exportBtn}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(139,92,246,0.35)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "0 6px 18px rgba(139,92,246,0.25)";
+            }}
+          >
+            <Download size={14} /> Download PDF
+          </button>
         </div>
       </aside>
 
-      <div style={{ flex: 1 }}>
-        <header className="centered-header" style={{ marginBottom: '3rem' }}>
-          <span className="badge badge-purple" style={{ padding: '0.6rem 1rem', marginBottom: '1rem', display: 'inline-flex' }}>
-             <Activity size={14} style={{ marginRight: '6px' }} /> Analytical Reports
+      {/* ── Main Content ── */}
+      <div style={S.mainContent}>
+        <header style={S.headerWrap}>
+          <span style={S.headerBadge}>
+            <Activity size={14} /> Analytical Reports
           </span>
-          <h1>{TABS.find(t => t.key === tab)?.label}</h1>
-          <p>Generated on {new Date().toLocaleDateString()} · Official Library Audit</p>
+          <h1 style={S.headerTitle}>{TABS.find(t => t.key === tab)?.label}</h1>
+          <p style={S.headerSub}>Generated on {new Date().toLocaleDateString()} · Official Library Audit</p>
         </header>
 
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}>
-             <div className="spinner" />
+          <div style={S.loadingWrap}>
+            <div style={S.spinner}></div>
+            <span style={{ color: "#8b80a9", fontSize: "0.9rem" }}>Loading report data...</span>
           </div>
         ) : (
-          <div className="report-content">
+          <div>
             {/* ── SUMMARY ── */}
             {tab === "summary" && summary && (
               <div className="stats-grid">
-                <div className="stat-card" style={{ borderLeft: '4px solid var(--primary)' }}>
-                  <div className="stat-icon-wrapper" style={{ background: 'var(--primary-glow)', color: 'var(--primary)' }}><BookOpen size={24} /></div>
+                <div className="stat-card" style={{ borderLeft: '4px solid #8b5cf6' }}>
+                  <div className="stat-icon-wrapper" style={{ background: 'rgba(139,92,246,0.1)', color: '#8b5cf6' }}><BookOpen size={24} /></div>
                   <span className="stat-label">Total Books</span>
                   <span className="stat-value">{summary.totalBooks}</span>
                 </div>
@@ -155,16 +325,16 @@ export default function Reports() {
                   </thead>
                   <tbody>
                     {issuedBooks.length === 0 ? (
-                      <tr><td colSpan={3} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>No active issuances.</td></tr>
+                      <tr><td colSpan={3} style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>No active issuances.</td></tr>
                     ) : issuedBooks.map((r) => (
                       <tr key={r._id}>
                         <td>
                           <div style={{ fontWeight: 800 }}>{r.bookId?.title}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>by {r.bookId?.author}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>by {r.bookId?.author}</div>
                         </td>
                         <td>
                           <div style={{ fontWeight: 600 }}>{r.userId?.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>ID: {r.userId?.membershipId}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>ID: {r.userId?.membershipId}</div>
                         </td>
                         <td>
                           <div style={{ fontSize: '0.85rem' }}>Issued: {new Date(r.issueDate).toLocaleDateString()}</div>
@@ -191,7 +361,7 @@ export default function Reports() {
                   </thead>
                   <tbody>
                     {overdueBooks.length === 0 ? (
-                      <tr><td colSpan={4} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>No overdue records! 🎉</td></tr>
+                      <tr><td colSpan={4} style={{ textAlign: 'center', padding: '4rem', color: '#94a3b8' }}>No overdue records! 🎉</td></tr>
                     ) : overdueBooks.map((r) => (
                       <tr key={r._id}>
                         <td>
@@ -200,7 +370,7 @@ export default function Reports() {
                         </td>
                         <td>
                           <div style={{ fontWeight: 600 }}>{r.userId?.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>{r.userId?.email}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{r.userId?.email}</div>
                         </td>
                         <td><span className="badge" style={{ background: '#fef3c7', color: '#92400e' }}>{r.daysOverdue} Days</span></td>
                         <td><span style={{ fontWeight: 800, color: '#ef4444' }}>₹{r.fine}</span></td>
@@ -245,7 +415,7 @@ export default function Reports() {
                         <tr key={f._id}>
                           <td>
                              <div style={{ fontWeight: 700 }}>{f.memberId?.name}</div>
-                             <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{f.bookId?.title?.slice(0,25)}...</div>
+                             <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{f.bookId?.title?.slice(0,25)}...</div>
                           </td>
                           <td style={{ fontWeight: 800, color: f.paidStatus ? '#10b981' : '#ef4444' }}>₹{f.amount}</td>
                           <td>
@@ -285,7 +455,7 @@ export default function Reports() {
                       {mostBorrowed.map((b, i) => (
                         <tr key={i}>
                           <td>
-                            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: i < 3 ? 'var(--primary)' : '#f1f5f9', color: i < 3 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: i < 3 ? '#8b5cf6' : '#f1f5f9', color: i < 3 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
                               {i + 1}
                             </div>
                           </td>

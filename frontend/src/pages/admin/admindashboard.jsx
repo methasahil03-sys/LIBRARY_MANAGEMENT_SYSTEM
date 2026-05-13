@@ -42,7 +42,7 @@ const AdminDashboard = () => {
   const [occupancyPercent, setOccupancyPercent] = useState(0);
   const [categoryData, setCategoryData] = useState({
     labels: [],
-    datasets: [{ data: [], backgroundColor: ["#6366f1", "#a855f7", "#3b82f6", "#10b981", "#f59e0b"], borderWidth: 0 }],
+    datasets: [{ data: [], backgroundColor: ["#818cf8", "#c084fc", "#60a5fa", "#34d399", "#fbbf24"], borderWidth: 0, borderColor: 'transparent' }],
   });
 
   const role = localStorage.getItem("role");
@@ -72,8 +72,9 @@ const AdminDashboard = () => {
           labels: Object.keys(categoryCount),
           datasets: [{ 
             data: Object.values(categoryCount), 
-            backgroundColor: ["#8b5cf6", "#3b82f6", "#ec4899", "#10b981", "#f59e0b", "#06b6d4"], 
-            borderWidth: 0 
+            backgroundColor: ["#818cf8", "#60a5fa", "#f472b6", "#34d399", "#fbbf24", "#22d3ee"], 
+            borderWidth: 0,
+            borderColor: 'transparent' 
           }],
         });
 
@@ -151,7 +152,7 @@ const AdminDashboard = () => {
           <h3 className="section-title"><BarChart3 size={18} /> Category Mix</h3>
           <div style={{ height: "250px" }}>
             <Pie data={categoryData} options={{ 
-              plugins: { legend: { position: "bottom", labels: { padding: 20, usePointStyle: true, font: { family: 'Inter', size: 12 } } } },
+              plugins: { legend: { position: "bottom", labels: { padding: 16, usePointStyle: true, color: '#a09cb5', font: { family: 'Plus Jakarta Sans', size: 12, weight: 600 } } } },
               maintainAspectRatio: false,
             }} />
           </div>

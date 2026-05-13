@@ -1,5 +1,7 @@
 import "../../animations.css";
+import "./reservations.css";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { Server_URL } from "../../utils/config";
 import { getAuthToken } from "../../utils/auth";
@@ -37,71 +39,100 @@ function Reservations() {
 
   useEffect(() => { fetchReservations(); }, []);
 
-  const statusBadge = (status) => {
+  const getStatusClass = (status) => {
     const map = {
-      Pending:   "warning",
-      Notified:  "info",
-      Fulfilled: "success",
-      Cancelled: "secondary",
-      Expired:   "danger",
+      Pending:   "pending",
+      Notified:  "notified",
+      Fulfilled: "fulfilled",
+      Cancelled: "cancelled",
+      Expired:   "expired",
     };
-    return <span className={`badge bg-${map[status] || "secondary"}`}>{status}</span>;
+    return map[status] || "cancelled";
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", padding: "2rem" }}>
-      <div className="container">
-        <h2 style={{ color: "#2c3e50", fontWeight: 700, marginBottom: "1.5rem" }}>
-          📋 My Reservations
-        </h2>
+    <div className="reservations-page anim-page">
+      <div className="reservations-wrapper">
 
+        {/* Header */}
+        <div className="reservations-header anim-fade-up">
+          <div className="reservations-header-icon">📋</div>
+          <div>
+            <h2>My Reservations</h2>
+            <p>Track and manage your book reservations</p>
+          </div>
+        </div>
+
+        {/* Content */}
         {loading ? (
-          <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
+          <div className="reservations-loading">
+            <div className="spinner"></div>
+            <span>Loading reservations...</span>
+          </div>
         ) : reservations.length === 0 ? (
-          <div className="card text-center p-5 shadow-sm border-0">
-            <div style={{ fontSize: "3rem" }}>📚</div>
-            <h5 className="mt-3 text-muted">No reservations found</h5>
-            <p className="text-muted">When a book is unavailable, you can reserve it from the book details page.</p>
+          <div className="reservations-empty anim-fade-up">
+            <div className="reservations-empty-icon">📚</div>
+            <h4>No reservations found</h4>
+            <p>
+              When a book is unavailable, you can reserve it from the book
+              details page. We'll notify you when it becomes available!
+            </p>
+            <Link to="/books" className="reservations-empty-btn">
+              📖 Browse Books
+            </Link>
           </div>
         ) : (
-          <div className="card shadow-sm border-0" style={{ borderRadius: 12 }}>
-            <div className="table-responsive">
-              <table className="table table-hover mb-0">
-                <thead style={{ background: "linear-gradient(90deg,#3498db,#2980b9)", color: "white" }}>
-                  <tr>
-                    <th className="p-3">#</th>
-                    <th className="p-3">Book</th>
-                    <th className="p-3">Author</th>
-                    <th className="p-3">Category</th>
-                    <th className="p-3">Reserved On</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reservations.map((r, i) => (
-                    <tr key={r._id}>
-                      <td className="p-3">{i + 1}</td>
-                      <td className="p-3"><strong>{r.bookId?.title}</strong></td>
-                      <td className="p-3">{r.bookId?.author}</td>
-                      <td className="p-3">{r.bookId?.category}</td>
-                      <td className="p-3">{new Date(r.reservationDate).toLocaleDateString()}</td>
-                      <td className="p-3">{statusBadge(r.status)}</td>
-                      <td className="p-3">
-                        {["Pending", "Notified"].includes(r.status) && (
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => cancelReservation(r._id)}
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="reservations-list">
+            {reservations.map((r, i) => (
+              <div
+                key={r._id}
+                className="reservation-card anim-fade-up"
+                style={{ animationDelay: `${i * 0.06}s` }}
+              >
+                <div className="reservation-num">{i + 1}</div>
+
+                <div className="reservation-info">
+                  <p className="reservation-title">{r.bookId?.title}</p>
+                  <div className="reservation-meta">
+                    <span className="reservation-meta-item">
+                      <span className="label">Author:</span>
+                      <span className="value">{r.bookId?.author}</span>
+                    </span>
+                    <span className="reservation-meta-item">
+                      <span className="label">Category:</span>
+                      <span className="value">{r.bookId?.category}</span>
+                    </span>
+                    <span className="reservation-meta-item">
+                      <span className="label">Reserved:</span>
+                      <span className="value">
+                        {new Date(r.reservationDate).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="reservation-status">
+                  <span className={`status-badge ${getStatusClass(r.status)}`}>
+                    {r.status}
+                  </span>
+                </div>
+
+                <div className="reservation-action">
+                  {["Pending", "Notified"].includes(r.status) && (
+                    <button
+                      className="cancel-btn"
+                      onClick={() => cancelReservation(r._id)}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
