@@ -313,6 +313,39 @@ body {
     transform: none !important;
 }
 
+.reserve-button {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #b5179e 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+    min-width: 220px;
+}
+
+.reserve-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(247, 37, 133, 0.4);
+}
+
+.reserve-button:disabled {
+    cursor: not-allowed;
+}
+
+.reserve-button.reserved {
+    background: #6c757d;
+    box-shadow: none;
+    transform: none !important;
+}
+
 .wishlist-button {
     background: white;
     color: var(--primary-color);
@@ -418,7 +451,7 @@ body {
         flex-direction: column;
     }
     
-    .issue-button, .wishlist-button {
+    .issue-button, .wishlist-button, .reserve-button {
         width: 100%;
     }
 }

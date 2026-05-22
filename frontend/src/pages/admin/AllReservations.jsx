@@ -54,6 +54,16 @@ export default function AllReservations() {
     catch (e) { showErrorToast(e.response?.data?.message || "Failed to notify"); }
   };
 
+  const fulfillReservation = async (id) => {
+    try {
+      const r = await axios.put(`${Server_URL}reservations/fulfill/${id}`, {}, { headers });
+      showSuccessToast(r.data.message);
+      fetchReservations();
+    } catch (e) {
+      showErrorToast(e.response?.data?.message || "Failed to fulfill");
+    }
+  };
+
   useEffect(() => { fetchReservations(); }, []);
 
   const statuses  = ["All", "Pending", "Notified", "Fulfilled", "Cancelled", "Expired"];
@@ -90,7 +100,8 @@ export default function AllReservations() {
           { label: "Pending", status: "Pending", icon: Clock },
           { label: "Notified", status: "Notified", icon: Bell },
           { label: "Fulfilled", status: "Fulfilled", icon: CheckCircle2 },
-          { label: "Cancelled", status: "Cancelled", icon: XCircle }
+          { label: "Cancelled", status: "Cancelled", icon: XCircle },
+          { label: "Expired", status: "Expired", icon: AlertCircle }
         ].map(item => (
           <div key={item.label} className="stat-card" style={{ borderLeft: `4px solid ${STATUS_CONFIG[item.status].color}` }}>
             <div className="stat-icon-wrapper" style={{ background: STATUS_CONFIG[item.status].bg, color: STATUS_CONFIG[item.status].color }}>
@@ -210,6 +221,20 @@ export default function AllReservations() {
                             <Bell size={14} style={{ marginRight: '6px' }} /> Notify
                           </button>
                         )}
+                        {r.status === "Notified" && (
+                          <button
+                            onClick={() => fulfillReservation(r._id)}
+                            className="fine-button-primary"
+                            style={{
+                              width: 'auto',
+                              padding: '0.5rem 1rem',
+                              fontSize: '0.8rem',
+                              background: 'var(--success, #10b981)'
+                            }}
+                          >
+                            <CheckCircle2 size={14} style={{ marginRight: '6px' }} /> Fulfill
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -221,4 +246,4 @@ export default function AllReservations() {
       )}
     </div>
   );
-}
+}

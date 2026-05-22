@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Server_URL } from "../../utils/config";
+import { getAuthToken } from "../../utils/auth";
 import { motion } from "framer-motion";
-import { FaBookOpen, FaUserEdit, FaTags, FaBarcode, FaRupeeSign, FaInfoCircle } from "react-icons/fa";
-import { IoMdTime } from "react-icons/io";
+import { FaBookOpen, FaTags, FaBarcode, FaRupeeSign, FaInfoCircle } from "react-icons/fa";
 import { RiBookmarkLine } from "react-icons/ri";
 import "./bookdetails.css"
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
@@ -17,6 +17,8 @@ function BookDetails() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isIssuing, setIsIssuing] = useState(false);
+    const [isReserving, setIsReserving] = useState(false);
+    const [activeReservation, setActiveReservation] = useState(null);
 
     // async function issueBook(bookid) {
     //     try {
@@ -50,44 +52,87 @@ function BookDetails() {
     // }
     async function issueBook(bookid) {
         try {
-          console.log("bookId");
-            console.log(bookid);
-          const authToken = localStorage.getItem("authToken");
-          console.log(authToken)
-          if (!authToken) {
-            showErrorToast("Please login to issue a book.");
+            setIsIssuing(true);
+            const authToken = getAuthToken();
+            if (!authToken) {
+                showErrorToast("Please login to issue a book.");
+                return;
+            }
+            const response = await axios.post(
+                `${Server_URL}books/borrow/request-issue/${bookid}`,
+                {},
+                { headers: { Authorization: `Bearer ${authToken}` } }
+            );
+            const { error, message } = response.data;
+            if (error) {
+                showErrorToast(message);
+            } else {
+                showSuccessToast(message);
+            }
+        } catch (err) {
+            showErrorToast(err.response?.data?.message || "Something went wrong! Please try again.");
+        } finally {
+            setIsIssuing(false);
+        }
+    }
+
+    async function reserveBook(bookid) {
+        try {
+            setIsReserving(true);
+            const authToken = getAuthToken();
+            if (!authToken) {
+                showErrorToast("Please login to reserve a book.");
+                return;
+            }
+            const response = await axios.post(
+                `${Server_URL}reservations/reserve/${bookid}`,
+                {},
+                { headers: { Authorization: `Bearer ${authToken}` } }
+            );
+            const { error, message, reservation } = response.data;
+            if (error) {
+                showErrorToast(message);
+            } else {
+                showSuccessToast(message);
+                setActiveReservation(reservation);
+            }
+        } catch (err) {
+            showErrorToast(err.response?.data?.message || "Failed to reserve book. Please try again.");
+        } finally {
+            setIsReserving(false);
+        }
+    }
+
+    async function checkExistingReservation(bookData) {
+        const authToken = getAuthToken();
+        if (!authToken || !bookData || bookData.availableCopies > 0) {
+            setActiveReservation(null);
             return;
         }
-           const url =Server_URL + 'borrow/request-issue/'+bookid;
-           const response = await axios.post(`${Server_URL}books/borrow/request-issue/${bookid}`,{}, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
-
-          // alert(response.data);
-          const {error,message} = response.data;
-          if(error){
-            console.log(error);
-            showErrorToast(message)
-          }
-          else{
-            showSuccessToast(message);
-          }
-        } catch (error) {
-          // console.error("Error:", error.response?.data || error.message);
-          showErrorToast(error.response?.data?.message || "Something went wrong! Please try again.");
-          
-        }    
-      }
+        try {
+            const res = await axios.get(`${Server_URL}reservations/my`, {
+                headers: { Authorization: `Bearer ${authToken}` },
+            });
+            const existing = (res.data.reservations || []).find(
+                (r) =>
+                    String(r.bookId?._id || r.bookId) === String(bookData._id) &&
+                    ["Pending", "Notified"].includes(r.status)
+            );
+            setActiveReservation(existing || null);
+        } catch {
+            setActiveReservation(null);
+        }
+    }
 
     useEffect(() => {
         async function fetchBook() {
             try {
                 setIsLoading(true);
                 const response = await axios.get(`${Server_URL}books/${id}`);
-                setBook(response.data);
+                const bookData = response.data;
+                setBook(bookData);
                 setError(null);
+                await checkExistingReservation(bookData);
             } catch (error) {
                 console.error("Error fetching book:", error);
                 setError("Failed to load book details. Please try again later.");
@@ -197,23 +242,51 @@ function BookDetails() {
                     </div>
                     
                     <div className="action-buttons">
-                        <motion.button 
-                            className={`issue-button ${book.availableCopies !== undefined && book.availableCopies <= 0 ? 'disabled' : ''}`}
-                            onClick={() => issueBook(book._id)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            disabled={book.availableCopies !== undefined && book.availableCopies <= 0}
-                        >
-                            {isIssuing ? (
-                                <span className="button-loader"></span>
+                        {book.availableCopies !== undefined && book.availableCopies <= 0 ? (
+                            activeReservation ? (
+                                <motion.button
+                                    className="reserve-button reserved"
+                                    disabled
+                                >
+                                    <RiBookmarkLine className="button-icon" />
+                                    Reserved ({activeReservation.status})
+                                </motion.button>
                             ) : (
-                                <>
-                                    <FaBookOpen className="button-icon" />
-                                    {book.availableCopies !== undefined && book.availableCopies <= 0 ? 
-                                        "Out of Stock" : "Issue This Book"}
-                                </>
-                            )}
-                        </motion.button>
+                                <motion.button
+                                    className="reserve-button"
+                                    onClick={() => reserveBook(book._id)}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    disabled={isReserving}
+                                >
+                                    {isReserving ? (
+                                        <span className="button-loader"></span>
+                                    ) : (
+                                        <>
+                                            <RiBookmarkLine className="button-icon" />
+                                            Reserve Book
+                                        </>
+                                    )}
+                                </motion.button>
+                            )
+                        ) : (
+                            <motion.button
+                                className="issue-button"
+                                onClick={() => issueBook(book._id)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                disabled={isIssuing}
+                            >
+                                {isIssuing ? (
+                                    <span className="button-loader"></span>
+                                ) : (
+                                    <>
+                                        <FaBookOpen className="button-icon" />
+                                        Issue This Book
+                                    </>
+                                )}
+                            </motion.button>
+                        )}
                     </div>
                 </div>
             </div>
