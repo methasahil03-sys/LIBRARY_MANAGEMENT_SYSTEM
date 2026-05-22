@@ -19,6 +19,8 @@ function FineConfig() {
   const [config, setConfig]   = useState({ ratePerDay: 5, maxFineCap: 500, gracePeriod: 0 });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving]   = useState(false);
+  const role = localStorage.getItem("role");
+  const isAdmin = role === "admin";
 
   const headers = { Authorization: `Bearer ${getAuthToken()}` };
 
@@ -32,6 +34,10 @@ function FineConfig() {
 
   const saveConfig = async (e) => {
     e.preventDefault();
+    if (!isAdmin) {
+      showErrorToast("Only administrators can update fine settings.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await axios.put(`${Server_URL}admin/fine-config`, config, { headers });
@@ -73,6 +79,7 @@ function FineConfig() {
                   className="fine-input-field"
                   value={config.ratePerDay}
                   onChange={e => setConfig({ ...config, ratePerDay: Number(e.target.value) })}
+                  disabled={!isAdmin}
                   required
                 />
                 <p className="item-meta" style={{ marginTop: '4px' }}>Amount charged for every day a book is kept past its due date.</p>
@@ -87,6 +94,7 @@ function FineConfig() {
                   className="fine-input-field"
                   value={config.maxFineCap}
                   onChange={e => setConfig({ ...config, maxFineCap: Number(e.target.value) })}
+                  disabled={!isAdmin}
                   required
                 />
                 <p className="item-meta" style={{ marginTop: '4px' }}>The highest possible fine amount per book.</p>
@@ -101,20 +109,28 @@ function FineConfig() {
                   className="fine-input-field"
                   value={config.gracePeriod}
                   onChange={e => setConfig({ ...config, gracePeriod: Number(e.target.value) })}
+                  disabled={!isAdmin}
                   required
                 />
                 <p className="item-meta" style={{ marginTop: '4px' }}>Allowed delay before fines begin to accrue.</p>
               </div>
 
-              <div style={{ marginTop: '1rem' }}>
-                <button type="submit" className="fine-button-primary" disabled={saving}>
-                  {saving ? (
-                    <><div className="spinner" style={{ width: '20px', height: '20px', borderThickness: '2px' }} /> Saving...</>
-                  ) : (
-                    <><Save size={18} /> Save Configuration</>
-                  )}
-                </button>
-              </div>
+              {isAdmin && (
+                <div style={{ marginTop: '1rem' }}>
+                  <button type="submit" className="fine-button-primary" disabled={saving}>
+                    {saving ? (
+                      <><div className="spinner" style={{ width: '20px', height: '20px', borderThickness: '2px' }} /> Saving...</>
+                    ) : (
+                      <><Save size={18} /> Save Configuration</>
+                    )}
+                  </button>
+                </div>
+              )}
+              {!isAdmin && (
+                <p className="item-meta" style={{ marginTop: '1rem' }}>
+                  Fine rules are view-only for librarians. Contact an administrator to change settings.
+                </p>
+              )}
             </form>
           </div>
 
