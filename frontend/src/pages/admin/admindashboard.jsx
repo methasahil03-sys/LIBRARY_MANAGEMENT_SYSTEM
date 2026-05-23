@@ -58,10 +58,15 @@ const AdminDashboard = () => {
       }
 
       // Fetch Books
+      let totalCopiesFromBooks = 0;
       const bookRes = await axios.get(Server_URL + "books");
       if (!bookRes.data.error) {
         const allBooks = bookRes.data.books;
         setTotalBooks(bookRes.data.totalBooks);
+        totalCopiesFromBooks = allBooks.reduce(
+          (acc, b) => acc + (b.totalCopies || 0),
+          0,
+        );
         
         const categoryCount = allBooks.reduce((acc, b) => {
           acc[b.category] = (acc[b.category] || 0) + 1;
@@ -77,11 +82,17 @@ const AdminDashboard = () => {
             borderColor: 'transparent' 
           }],
         });
+      }
 
-        const borrowed = allBooks.reduce((acc, b) => acc + (b.totalCopies - b.availableCopies), 0);
+      const homeRes = await axios.get(Server_URL + "home");
+      if (!homeRes.data.error) {
+        const borrowed = homeRes.data.borrowedCount ?? homeRes.data.issuedCount ?? 0;
+        const totalCopies = homeRes.data.totalCopies ?? totalCopiesFromBooks;
         setBorrowedBooks(borrowed);
-        const totalCopies = allBooks.reduce((acc, b) => acc + b.totalCopies, 0);
-        setOccupancyPercent(totalCopies ? Math.round((borrowed / totalCopies) * 100) : 0);
+        const percent = totalCopies
+          ? Math.min(100, Math.round((borrowed / totalCopies) * 100))
+          : 0;
+        setOccupancyPercent(percent);
       }
 
       // Latest Books

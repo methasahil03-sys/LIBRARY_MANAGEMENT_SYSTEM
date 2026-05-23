@@ -140,10 +140,11 @@ librarianController.approveReturnRequest = async (req, res) => {
       });
     }
 
-    await BookModel.updateOne(
-      { _id: borrow.bookId },
-      { $inc: { availableCopies: 1 } }
-    );
+    const book = await BookModel.findById(borrow.bookId);
+    if (book && book.availableCopies < book.totalCopies) {
+      book.availableCopies += 1;
+      await book.save();
+    }
 
     borrow.status = "Returned";
     borrow.returnDate = new Date();

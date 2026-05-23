@@ -194,6 +194,26 @@ booksController.updateBook = async (req, res) => {
       price,
     } = req.body;
 
+    const existing = await BookModel.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    const nextTotal =
+      totalCopies !== undefined && totalCopies !== null && totalCopies !== ""
+        ? Number(totalCopies)
+        : existing.totalCopies;
+    let nextAvailable =
+      availableCopies !== undefined &&
+      availableCopies !== null &&
+      availableCopies !== ""
+        ? Number(availableCopies)
+        : existing.availableCopies;
+
+    if (Number.isFinite(nextTotal) && nextTotal >= 0) {
+      nextAvailable = Math.min(Math.max(0, nextAvailable), nextTotal);
+    }
+
     const { publisher, publicationYear } = req.body; //  NEW
     const bookUpdate = await BookModel.findByIdAndUpdate(
       req.params.id,
@@ -201,8 +221,9 @@ booksController.updateBook = async (req, res) => {
         title,
         author,
         category,
-        availableCopies,
-        totalCopies,
+        isbn,
+        availableCopies: nextAvailable,
+        totalCopies: nextTotal,
         price,
         ...(publisher !== undefined && { publisher }), //  NEW
         ...(publicationYear !== undefined && { publicationYear }), //  NEW
@@ -410,10 +431,11 @@ booksController.returnBook = async (req, res) => {
     issuedBook.returnDate = new Date();
     await issuedBook.save();
 
-    // Increment available copies in the Book model
-    await BookModel.findByIdAndUpdate(issuedBook.bookId, {
-      $inc: { availableCopies: 1 }, // Increase available copies by 1
-    });
+    const book = await BookModel.findById(issuedBook.bookId);
+    if (book && book.availableCopies < book.totalCopies) {
+      book.availableCopies += 1;
+      await book.save();
+    }
 
     res.json({ message: "Book returned successfully", issuedBook });
   } catch (error) {

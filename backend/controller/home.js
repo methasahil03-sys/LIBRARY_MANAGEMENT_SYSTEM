@@ -14,10 +14,18 @@ homeController.getHomeData = async (req, res) => {
 
     // issued + borrowers
     const issuedCount = await BorrowModel.countDocuments({ status: "Issued" });
+    const borrowedCount = await BorrowModel.countDocuments({
+      status: { $in: ["Issued", "Requested Return"] },
+    });
     const borrowerIds = await BorrowModel.distinct("userId", {
       status: "Issued",
     });
     const totalBorrowers = borrowerIds.length;
+
+    const copyStats = await BookModel.aggregate([
+      { $group: { _id: null, totalCopies: { $sum: "$totalCopies" } } },
+    ]);
+    const totalCopies = copyStats[0]?.totalCopies || 0;
 
     // latest books for the cards/carousel (adjust limit to your UI)
     const books = await BookModel.find({})
@@ -38,6 +46,8 @@ homeController.getHomeData = async (req, res) => {
       categoriesCount: totalCategories,
       borrowersCount: totalBorrowers,
       issuedCount,
+      borrowedCount,
+      totalCopies,
     });
   } catch (err) {
     console.error("HOME STATS ERROR:", err);
@@ -54,6 +64,8 @@ homeController.getHomeData = async (req, res) => {
       categoriesCount: 0,
       borrowersCount: 0,
       issuedCount: 0,
+      borrowedCount: 0,
+      totalCopies: 0,
     });
   }
 };
