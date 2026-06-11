@@ -1,22 +1,3 @@
-### Librarian
-
-- Approve or reject student borrow requests
-- Confirm returned books and update availability
-- View currently borrowed books
-- Manage reservations and notify students
-- View fines and mark them as paid
-
-### Admin
-
-- View dashboard statistics for books, students, librarians, borrowed items, and collection usage
-- Add, edit, and delete books
-- Create and remove librarian accounts
-- Manage student/member accounts
-- Configure fine rules such as daily rate, grace period, and maximum cap
-- Access reports for issued books, overdue books, fines, popular titles, and member activity
-- Manage all reservations
-
----
 
 ## Tech Stack
 
