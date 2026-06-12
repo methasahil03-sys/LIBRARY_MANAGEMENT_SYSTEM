@@ -1,36 +1,7 @@
 
 
 
-### Frontend
 
-| Technology | Purpose |
-|---|---|
-| React 19 | User interface |
-| Vite 7 | Build tool and development server |
-| React Router DOM | Client-side routing |
-| Axios | API requests |
-| Chart.js | Dashboard charts and analytics |
-| Framer Motion | Page animations |
-| React Toastify | User notifications |
-| React Hook Form | Form handling |
-| Lucide React / React Icons | Icons |
-
-### Backend
-
-| Technology | Purpose |
-|---|---|
-| Node.js | Runtime environment |
-| Express.js | REST API server |
-| MongoDB | Database |
-| Mongoose | ODM and schema modeling |
-| JWT | Authentication |
-| bcryptjs | Password hashing |
-| Cloudinary | Book cover image storage |
-| Multer | File upload handling |
-| Nodemailer | OTP and email notifications |
-| dotenv | Environment configuration |
-
----
 
 ## Project Structure
 
